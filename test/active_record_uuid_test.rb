@@ -14,7 +14,7 @@ class ActiveRecordUUIDTest < Test::Unit::TestCase
   def test_callback_fires_normally
     flexmock(@record) do |m|
       m.should_receive(:uuid => nil).at_least.once
-      m.should_receive(:uuid=).at_least.once.with(/^.{32}$/)
+      m.should_receive(:uuid=).at_least.once.with(/^.{36}$/)
     end
     assert @record.save
   end

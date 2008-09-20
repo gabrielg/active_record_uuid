@@ -37,7 +37,7 @@ module Apliko
         end
       
         def record_active_record_uuid?
-          uuid_generation_enabled && respond_to?(:uuid=) && uuid.blank?
+          uuid_generation_enabled && respond_to?(:uuid=) && respond_to?(:uuid) && uuid.blank?
         end
       
       end # InstanceMethods

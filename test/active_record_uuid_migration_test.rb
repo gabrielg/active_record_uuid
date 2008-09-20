@@ -18,7 +18,7 @@ class ActiveRecordUUIDMigrationTest < Test::Unit::TestCase
 
   def test_uuid_migration_method_creates_string_column
     flexmock(ActiveRecord::ConnectionAdapters::TableDefinition) do |m|
-      m.new_instances.should_receive(:column).with(:uuid, :string, :limit => 32).at_least.once.and_return(true)
+      m.new_instances.should_receive(:column).with(:uuid, :string, :null => false, :limit => 36).at_least.once.and_return(true)
     end
     ActiveRecordUUIDTestMigration.suppress_messages { ActiveRecordUUIDTestMigration.migrate(:up) }
   end
