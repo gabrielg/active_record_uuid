@@ -1,6 +1,6 @@
 require 'uuidtools'
 
-module Apliko
+module ThumbleMonks
   module ActiveRecordUUID
     module Base
       def self.included(klass)
@@ -54,5 +54,5 @@ module Apliko
   
 end
 
-ActiveRecord::Base.send(:include, Apliko::ActiveRecordUUID::Base)
-ActiveRecord::ConnectionAdapters::TableDefinition.send(:include, Apliko::ActiveRecordUUID::TableDefinition)
+ActiveRecord::Base.send(:include, ThumbleMonks::ActiveRecordUUID::Base)
+ActiveRecord::ConnectionAdapters::TableDefinition.send(:include, ThumbleMonks::ActiveRecordUUID::TableDefinition)

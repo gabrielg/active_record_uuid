@@ -1,1 +1,1 @@
-require 'active_record_uuid'
+require 'thumble_monks/active_record_uuid'
