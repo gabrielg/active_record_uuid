@@ -56,3 +56,4 @@ end
 
 ActiveRecord::Base.send(:include, ThumbleMonks::ActiveRecordUUID::Base)
 ActiveRecord::ConnectionAdapters::TableDefinition.send(:include, ThumbleMonks::ActiveRecordUUID::TableDefinition)
+ActiveRecord::ConnectionAdapters::Table.send(:include, ThumbleMonks::ActiveRecordUUID::TableDefinition)
