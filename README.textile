@@ -1,0 +1,39 @@
+h1. active_record_uuid
+
+Written by Gabriel Gironda
+
+h2. Download
+
+Github: "Page":http://github.com/gabrielg/active_record_uuid/tree/master "Clone":git://github.com/gabrielg/active_record_uuid.git
+
+h2. What is this?
+
+This plugin adds auto-generated UUIDs to ActiveRecord models. 
+
+To add this capability to existing models:
+
+<pre><code>
+  class AddUuidToInvites < ActiveRecord::Migration
+    def self.up
+      change_table :invites do |t|
+        t.uuid
+      end
+    end
+</code></pre>
+
+To set it up when creating new tables:
+
+<pre><code>
+  class CreatePeople < ActiveRecord::Migration
+    def self.up
+      create_table :people do |t|
+        t.string :name
+        t.uuid
+      end
+    end
+</code></pre>
+
+When your record is saved, it'll have a UUID, accessible via the 'uuid' attribute.
+
+
+Copyright (c) 2007 Gabriel Gironda, released under the MIT license
