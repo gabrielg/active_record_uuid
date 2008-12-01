@@ -1,37 +1,45 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
-class ActiveRecordUUIDTestMigration < ActiveRecord::Migration
-  def self.up
-    create_table :uuid_test, :id => false do |t|
-      t.uuid
-    end
-  end
-end
-
-class ActiveRecordUUIDTestChangeTableMigration  < ActiveRecord::Migration
-  def self.up
-    change_table :uuid_test do |t|
-      t.uuid
-    end
-  end
-end
-
 class ActiveRecordUUIDMigrationTest < Test::Unit::TestCase
-  include FlexMock::MockContainer
 
-  def test_uuid_migration_method_creates_string_column
-    flexmock(ActiveRecord::Base.connection).should_receive(:execute).at_least.once.and_return(true)
-    flexmock(ActiveRecord::ConnectionAdapters::TableDefinition) do |m|
-      m.new_instances.should_receive(:column).with(:uuid, :string, :null => false, :limit => 36).at_least.once.and_return(true)
-    end
-    ActiveRecordUUIDTestMigration.suppress_messages { ActiveRecordUUIDTestMigration.migrate(:up) }
+  class ActiveRecordUUIDTestMigration < ActiveRecord::Migration
+    def self.up; create_table(:uuid_test, :id => false) { |t| t.uuid }; end
+  end
+
+  class ActiveRecordUUIDTestChangeTableMigration  < ActiveRecord::Migration
+    def self.up; change_table(:uuid_test) { |t| t.uuid }; end
+  end  
+
+  def setup
+    ActiveRecord::Base.connection.stubs(:execute).returns(true)
   end
   
-  def test_uuid_migration_method_when_changing_table_creates_string_column
-    flexmock(ActiveRecord::ConnectionAdapters::Table) do |m|
-      m.new_instances.should_receive(:column).with(:uuid, :string, :null => false, :limit => 36).at_least.once.and_return(true)
+  context "creating a new table with a uuid" do
+    
+    should "add a unique index" do
+      ActiveRecord::ConnectionAdapters::TableDefinition.any_instance.expects(:index).with(:uuid, :unique => true)
+      ActiveRecordUUIDTestMigration.suppress_messages { ActiveRecordUUIDTestMigration.up }
     end
-    ActiveRecordUUIDTestChangeTableMigration.suppress_messages { ActiveRecordUUIDTestChangeTableMigration.migrate(:up) }
-  end
+    
+    should "create a string column for the UUID" do
+      ActiveRecord::ConnectionAdapters::TableDefinition.any_instance.expects(:column).with(:uuid, :string, :null => false, :limit => 36)
+      ActiveRecordUUIDTestMigration.suppress_messages { ActiveRecordUUIDTestMigration.up }
+    end
+    
+  end # creating a new table with a uuid
+  
+  context "adding a uuid to an existing table" do
+    
+    should "create a string column for the UUID" do
+      ActiveRecord::ConnectionAdapters::Table.any_instance.expects(:column).with(:uuid, :string, :null => false, :limit => 36)
+      ActiveRecordUUIDTestChangeTableMigration.suppress_messages { ActiveRecordUUIDTestChangeTableMigration.migrate(:up) }
+    end
+    
+    should "add a unique index" do
+      ActiveRecord::ConnectionAdapters::Table.any_instance.expects(:index).with(:uuid, :unique => true)
+      ActiveRecordUUIDTestChangeTableMigration.suppress_messages { ActiveRecordUUIDTestChangeTableMigration.migrate(:up) }
+    end
+
+  end # adding a uuid to an existing table
   
 end

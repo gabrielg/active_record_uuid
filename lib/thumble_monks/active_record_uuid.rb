@@ -44,9 +44,15 @@ module ThumbleMonks
     end   # Base
     
     module TableDefinition
+
+      # Why does TableDefinition not have index()? It is a mystery.
+      def index(*args)
+        @base.add_index(@table_name, *args)
+      end
       
       def uuid
         column(:uuid, :string, :limit => 36, :null => false)
+        index(:uuid, :unique => true)
       end
       
     end

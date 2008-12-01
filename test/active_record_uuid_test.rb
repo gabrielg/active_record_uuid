@@ -1,52 +1,58 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
-class UUIDTest < ActiveRecord::Base; end
-
 class ActiveRecordUUIDTest < Test::Unit::TestCase
-  include FlexMock::MockContainer
+  class UUIDTest < ActiveRecord::Base; end
   
-  def setup
-    flexmock(UUIDTest).should_receive(:columns).at_least.once.and_return([])
-    @record = UUIDTest.new
-    flexmock(@record).should_receive(:create_without_callbacks => true)
-  end
-  
-  def test_callback_fires_normally
-    flexmock(@record) do |m|
-      m.should_receive(:uuid => nil).at_least.once
-      m.should_receive(:uuid=).at_least.once.with(/^.{36}$/)
+  context "a record" do
+    setup do
+      UUIDTest.stubs(:columns).returns([])
+      @record = UUIDTest.new
     end
-    assert @record.save
-  end
-  
-  def test_callback_doesnt_fire_when_manually_disabled
-    UUIDTest.disable_uuid_generation
-    flexmock(@record).should_receive(:uuid, :uuid=).never
-    assert @record.save
-  ensure
-    UUIDTest.enable_uuid_generation
-  end
-
-  def test_callback_doesnt_fire_when_record_doesnt_respond_to_uuid
-    flexmock(@record).should_receive(:uuid=).never
-    assert @record.save
-  end
-  
-  def test_callback_doesnt_fire_when_record_uuid_is_already_set
-    flexmock(@record) do |m|
-      m.should_receive(:uuid => "already set").at_least.once
-      m.should_receive(:uuid=).never
+    
+    teardown do
+      UUIDTest.enable_uuid_generation
     end
-    assert @record.save
-  end
-  
-  def test_callback_only_fires_on_create
-    flexmock(@record) do |m|
-      m.should_receive(:update_without_callbacks => true).at_least.once.and_return(true)
-      m.should_receive(:new_record? => false).at_least.once
-      m.should_receive(:uuid=).never
-    end
-    assert @record.save
-  end
+    
+    context "on create" do
+      setup do
+        @record.expects(:create_without_callbacks).returns(true)
+      end
+      
+      should "assign a UUID on save if the record responds to uuid" do
+        @record.expects(:uuid).returns(nil)
+        @record.expects(:uuid=).with(regexp_matches(/^.{36}$/))
+        assert @record.save
+      end
+    
+      should "not assign a UUID when UUID generation is disabled" do
+        UUIDTest.disable_uuid_generation
+        @record.expects(:uuid=).never
+        assert @record.save
+      end
+    
+      should "not assign a UUID if the record doesnt respond to 'uuid'" do
+        @record.expects(:uuid=).never
+        assert @record.save
+      end
+    
+      should "not assign a UUID if the 'uuid' getter returns a non-nil value" do
+        @record.expects(:uuid).returns("foo bar")
+        @record.expects(:uuid=).never
+        assert @record.save
+      end
+      
+    end # on create
+    
+    context "on update" do
+    
+      should "not assign a UUID on update rather than create" do
+        @record.expects(:update_without_callbacks).returns(true)
+        @record.expects(:new_record?).at_least_once.returns(false)
+        @record.expects(:uuid=).never
+        assert @record.save
+      end
+    end # on update
+    
+  end # a new record
   
 end
