@@ -42,24 +42,42 @@ module ThumbleMonks
       
       end # InstanceMethods
     end   # Base
-    
-    module TableDefinition
 
-      # Why does TableDefinition not have index()? It is a mystery.
-      def index(*args)
-        @base.add_index(@table_name, *args)
+    module MigrationHelpers
+      module TableDefinition
+
+        # Why does TableDefinition not have index()? It is a mystery.
+        def index(*args)
+          @base.add_index(@table_name, *args)
+        end
+      
+        def uuid(opts = {})
+          column(:uuid, :string, opts.except(:add_index).reverse_merge(:limit => 36, :null => false))
+          index(:uuid, :unique => true) unless opts[:add_index] == false
+        end
       end
       
-      def uuid
-        column(:uuid, :string, :limit => 36, :null => false)
-        index(:uuid, :unique => true)
+      module ChangeHelpers
+        def generate_uuids!
+          ThumbleMonks::ActiveRecordUUID::MigrationHelpers.generate_uuids_for_table!(@table_name.to_sym)
+        end
       end
       
-    end
-  end # ActiveRecordUUID
-  
+      def self.generate_uuids_for_table!(table_name)
+        helper = ar_helper(table_name)
+        updateable = helper.find(:all, :conditions => {:uuid => nil})
+        updateable.each { |u| u.update_attribute(:uuid, UUID.random_create.to_s) }
+      end
+    
+      def self.ar_helper(table_name)
+        Class.new(ActiveRecord::Base) { set_table_name table_name }
+      end
+      
+    end # MigrationHelpers
+  end   # ActiveRecord
 end
 
 ActiveRecord::Base.send(:include, ThumbleMonks::ActiveRecordUUID::Base)
-ActiveRecord::ConnectionAdapters::TableDefinition.send(:include, ThumbleMonks::ActiveRecordUUID::TableDefinition)
-ActiveRecord::ConnectionAdapters::Table.send(:include, ThumbleMonks::ActiveRecordUUID::TableDefinition)
+ActiveRecord::ConnectionAdapters::TableDefinition.send(:include, ThumbleMonks::ActiveRecordUUID::MigrationHelpers::TableDefinition)
+ActiveRecord::ConnectionAdapters::Table.send(:include, ThumbleMonks::ActiveRecordUUID::MigrationHelpers::TableDefinition)
+ActiveRecord::ConnectionAdapters::Table.send(:include, ThumbleMonks::ActiveRecordUUID::MigrationHelpers::ChangeHelpers)

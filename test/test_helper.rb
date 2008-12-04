@@ -1,6 +1,8 @@
 $: << File.dirname(__FILE__) + '/../lib'
-RAILS_ENV = "test"
-require File.expand_path(File.join(File.dirname(__FILE__), '../../../../config/environment.rb'))
+require 'rubygems'
+require 'active_record'
+require 'init'
 require 'test/unit'
 require 'mocha'
 require 'shoulda'
+ActiveRecord::Base.establish_connection('adapter' => 'sqlite3', 'dbfile' => ':memory:')

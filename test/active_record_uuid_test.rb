@@ -1,6 +1,7 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
 class ActiveRecordUUIDTest < Test::Unit::TestCase
+  
   class UUIDTest < ActiveRecord::Base; end
   
   context "a record" do
