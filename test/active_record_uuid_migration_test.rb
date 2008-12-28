@@ -22,7 +22,7 @@ class ActiveRecordUUIDMigrationTest < Test::Unit::TestCase
       end
     end
     
-    should "add a unique index" do
+    should_eventually "add a unique index" do
       ActiveRecord::ConnectionAdapters::TableDefinition.any_instance.expects(:index).with(:uuid, :unique => true)
       @migration.up_suppressed
     end
@@ -62,7 +62,7 @@ class ActiveRecordUUIDMigrationTest < Test::Unit::TestCase
       @migration.up_suppressed
     end
     
-    should "add a unique index" do
+    should_eventually "add a unique index" do
       ActiveRecord::ConnectionAdapters::Table.any_instance.expects(:index).with(:uuid, :unique => true)
       @migration.up_suppressed
     end

@@ -53,7 +53,7 @@ module ThumbleMonks
       
         def uuid(opts = {})
           column(:uuid, :string, opts.except(:add_index).reverse_merge(:limit => 36, :null => false))
-          index(:uuid, :unique => true) unless opts[:add_index] == false
+          index(:uuid, :unique => true) if opts[:add_index]
         end
       end
       
