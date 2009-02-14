@@ -52,7 +52,7 @@ module ThumbleMonks
         end
       
         def uuid(opts = {})
-          column(:uuid, :string, opts.except(:add_index).reverse_merge(:limit => 36, :null => false))
+          column(:uuid, :string, opts.except(:add_index).reverse_merge(:limit => 36, :null => false, :default => ""))
           index(:uuid, :unique => true) if opts[:add_index]
         end
       end
@@ -65,7 +65,7 @@ module ThumbleMonks
       
       def self.generate_uuids_for_table!(table_name)
         helper = ar_helper(table_name)
-        updateable = helper.find(:all, :conditions => {:uuid => nil})
+        updateable = helper.find(:all, :conditions => {:uuid => [nil, ""]})
         updateable.each { |u| u.update_attribute(:uuid, UUID.random_create.to_s) }
       end
     
