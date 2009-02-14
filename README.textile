@@ -33,7 +33,13 @@ To set it up when creating new tables:
     end
 </code></pre>
 
-When your record is saved, it'll have a UUID, accessible via the 'uuid' attribute.
+When your record is created, it'll have a UUID, accessible via the 'uuid' attribute.
+
+h2. Todo
+
+* The generate_uuids! migration helper seems not to work, possibly because the uuid attribute is read-only.
+* Test cases failed to catch the above.
+* Addition of index in uuid migration is broken. See commit 697a2f7b02681b03ef1f7624f58ea19a622b3a32.
 
 
 Copyright (c) 2007 Gabriel Gironda, released under the MIT license
