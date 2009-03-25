@@ -10,7 +10,6 @@ module ThumbleMonks
           before_create :generate_active_record_uuid
           class_inheritable_accessor :uuid_generation_enabled
           attr_readonly :uuid
-          attr_protected :uuid
           self.uuid_generation_enabled = true
         end
       end
