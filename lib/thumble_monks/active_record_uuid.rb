@@ -32,7 +32,7 @@ module ThumbleMonks
         end
       
         def make_uuid
-          UUID.random_create.to_s
+          UUIDTools::UUID.random_create.to_s
         end
       
         def record_active_record_uuid?
@@ -65,7 +65,7 @@ module ThumbleMonks
       def self.generate_uuids_for_table!(table_name)
         helper = ar_helper(table_name)
         updateable = helper.find(:all, :conditions => {:uuid => [nil, ""]})
-        updateable.each { |u| u.update_attribute(:uuid, UUID.random_create.to_s) }
+        updateable.each { |u| u.update_attribute(:uuid, UUIDTools::UUID.random_create.to_s) }
       end
     
       def self.ar_helper(table_name)
