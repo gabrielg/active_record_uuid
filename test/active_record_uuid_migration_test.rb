@@ -113,14 +113,14 @@ class ActiveRecordUUIDMigrationTest < Test::Unit::TestCase
       end
       
       should "find all records for the given table without a UUID" do
-        @mock_ar_helper.expects(:find).with(:all, :conditions => {:uuid => nil}).returns([])
+        @mock_ar_helper.expects(:find).with(:all, :conditions => {:uuid => [nil, ""]}).returns([])
         ThumbleMonks::ActiveRecordUUID::MigrationHelpers.generate_uuids_for_table!(@table)
       end
     
       should "update the uuid attribute on each record" do
         mock_record = mock
         mock_record.expects(:update_attribute).with(:uuid, regexp_matches(/^.{36}$/))
-        @mock_ar_helper.expects(:find).with(:all, :conditions => {:uuid => nil}).returns([mock_record])
+        @mock_ar_helper.expects(:find).with(:all, :conditions => {:uuid => [nil, ""]}).returns([mock_record])
         ThumbleMonks::ActiveRecordUUID::MigrationHelpers.generate_uuids_for_table!(@table)
       end
     end # generate_uuids_for_table()

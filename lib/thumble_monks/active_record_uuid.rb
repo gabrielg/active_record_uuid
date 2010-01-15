@@ -7,7 +7,7 @@ module ThumbleMonks
         klass.instance_eval do
           include InstanceMethods
           extend ClassMethods
-          before_create :generate_active_record_uuid
+          before_validation_on_create :generate_active_record_uuid
           class_inheritable_accessor :uuid_generation_enabled
           attr_readonly :uuid
           self.uuid_generation_enabled = true
